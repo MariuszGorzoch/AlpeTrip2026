@@ -7,7 +7,7 @@
 
 ## Mapy i dane
 
-- **Mapa 1 — Alpe Adria + Villa Libuse + atrakcje:** `map-1-alpe-adria.html` — pełna trasa Salzburg→Grado z OSM (relation 19738530), z czerwonym najlepszym odcinkiem Tarvisio→Venzone, hotelem Villa Libuse oraz must-see okolicy oznaczonymi żółtymi gwiazdkami (klikalne — zdjęcie, opis, linki Wikipedia + galeria zdjęć).
+- **Mapa 1 — Alpe Adria + Villa Libuse + atrakcje:** `index.html` — pełna trasa Salzburg→Grado z OSM (relation 19738530), z czerwonym najlepszym odcinkiem Tarvisio→Venzone, hotelem Villa Libuse oraz must-see okolicy oznaczonymi żółtymi gwiazdkami (klikalne — zdjęcie, opis, linki Wikipedia + galeria zdjęć).
 - **Mapa 2 — Lago di Garda / Arco (druga część):** `map-2-garda.html` — kandydaci na hotel w Arco i pętle gravel.
 - **GPX:** `gpx/alpe-adria-full.gpx` — pełna trasa Alpe Adria, podzielona na etapy (CAAR1–CAAR8). Wrzucasz do Komoot, Garmin Connect lub Wahoo do nawigacji "po zakrętach".
 - **Przewodnik po okolicy bazy Alpe Adria:** `villa-libuse-area.md` — co warto zobaczyć rowerem z Villa Libuse + dystanse.
