@@ -9,18 +9,15 @@
 <style>
   :root { color-scheme: light; }
   html, body { margin:0; padding:0; height:100%; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#fff; color:#1a1a1a; }
-  #app { display:flex; flex-direction:column; height:100vh; }
-  header { padding:10px 16px; border-bottom:1px solid #e5e5e5; background:#fafafa; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  header h1 { font-size:16px; margin:0; font-weight:600; }
-  header .controls { display:flex; gap:6px; flex-wrap:wrap; }
-  header button { font:inherit; padding:6px 10px; border:1px solid #d0d0d0; background:#fff; border-radius:6px; cursor:pointer; }
-  header button:hover { background:#f0f0f0; }
-  header button.primary { background:#1f6feb; color:white; border-color:#1f6feb; }
-  header button.primary:hover { background:#1858c2; }
-  #map { flex:1; }
-  .legend { background:rgba(255,255,255,0.96); padding:10px 12px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.15); font-size:12px; line-height:1.5; max-width:280px; }
-  .legend h4 { margin:0 0 6px; font-size:13px; }
-  .legend .row { display:flex; align-items:center; gap:6px; margin:3px 0; }
+  #map { position:absolute; inset:0; }
+  .legend { background:rgba(255,255,255,0.96); border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.15); font-size:12px; line-height:1.5; max-width:280px; overflow:hidden; }
+  .legend details summary { padding:8px 12px; cursor:pointer; font-weight:600; font-size:13px; user-select:none; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .legend details summary::-webkit-details-marker { display:none; }
+  .legend details summary::after { content:"▾"; font-size:11px; color:#666; transition:transform 0.15s; }
+  .legend details[open] summary::after { transform:rotate(180deg); }
+  .legend details summary:hover { background:#f5f5f5; }
+  .legend .legend-body { padding:0 12px 10px; border-top:1px solid #eee; }
+  .legend .row { display:flex; align-items:center; gap:6px; margin:5px 0; }
   .legend .swatch { width:18px; height:4px; border-radius:2px; }
   .legend .dot { width:11px; height:11px; border-radius:50%; border:2px solid white; box-shadow:0 0 0 1px rgba(0,0,0,0.3); display:inline-block; }
   .legend .star { color:#f5b301; font-size:18px; line-height:1; -webkit-text-stroke:1px #b07900; text-shadow:0 0 1px #000; }
@@ -52,15 +49,6 @@
 </head>
 <body>
 <div id="app">
-  <header>
-    <h1>Alpe Adria — Villa Libuse + atrakcje regionu</h1>
-    <div class="controls">
-      <button class="primary" onclick="fitHighlight()">Najlepszy odcinek (Tarvisio→Venzone)</button>
-      <button class="primary" onclick="fitFull()">Cała trasa Alpe Adria</button>
-      <button onclick="fitHotel()">Wokół Villa Libuse</button>
-      <button onclick="fitPlaces()">Wszystkie atrakcje</button>
-    </div>
-  </header>
   <div id="map"></div>
 </div>
 
@@ -147,13 +135,19 @@ const legend = L.control({ position: 'bottomright' });
 legend.onAdd = function () {
   const div = L.DomUtil.create('div', 'legend');
   div.innerHTML = `
-    <h4>Legenda</h4>
-    <div class="row"><span class="swatch" style="background:#3b82f6"></span> Trasa Alpe Adria (cała)</div>
-    <div class="row"><span class="swatch" style="background:#dc2626"></span> Najlepszy odcinek: Tarvisio → Venzone</div>
-    <div class="row"><span class="dot" style="background:#84cc16"></span> Villa Libuse B&B (baza)</div>
-    <div class="row"><span class="star">★</span> Atrakcja warta zobaczenia (kliknij)</div>
-    <div class="note">Kliknij gwiazdkę, aby zobaczyć zdjęcie, opis i linki do Wikipedii / galerii zdjęć.</div>
+    <details>
+      <summary>Legenda</summary>
+      <div class="legend-body">
+        <div class="row"><span class="swatch" style="background:#3b82f6"></span> Trasa Alpe Adria (cała)</div>
+        <div class="row"><span class="swatch" style="background:#dc2626"></span> Najlepszy odcinek: Tarvisio → Venzone</div>
+        <div class="row"><span class="dot" style="background:#84cc16"></span> Villa Libuse B&B (baza)</div>
+        <div class="row"><span class="star">★</span> Atrakcja warta zobaczenia (kliknij)</div>
+        <div class="note">Kliknij gwiazdkę, aby zobaczyć zdjęcie, opis i linki do Wikipedii / galerii zdjęć.</div>
+      </div>
+    </details>
   `;
+  L.DomEvent.disableClickPropagation(div);
+  L.DomEvent.disableScrollPropagation(div);
   return div;
 };
 legend.addTo(map);
@@ -168,3 +162,4 @@ fitPlaces();
 </script>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                           
