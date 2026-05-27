@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Map 2 — Lake Garda / Arco (second part)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+  :root { color-scheme: light; }
+  html, body { margin:0; padding:0; height:100%; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#fff; color:#1a1a1a; }
+  #app { display:flex; flex-direction:column; height:100vh; }
+  header { padding:10px 16px; border-bottom:1px solid #e5e5e5; background:#fafafa; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  header h1 { font-size:16px; margin:0; font-weight:600; }
+  header .controls { display:flex; gap:6px; flex-wrap:wrap; }
+  header button { font:inherit; padding:6px 10px; border:1px solid #d0d0d0; background:#fff; border-radius:6px; cursor:pointer; }
+  header button:hover { background:#f0f0f0; }
+  header button.primary { background:#1f6feb; color:white; border-color:#1f6feb; }
+  header button.primary:hover { background:#1858c2; }
+  #map { flex:1; }
+  .legend { background:rgba(255,255,255,0.96); padding:10px 12px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.15); font-size:12px; line-height:1.4; max-width:240px; }
+  .legend h4 { margin:0 0 6px; font-size:13px; }
+  .legend .row { display:flex; align-items:center; gap:6px; margin:3px 0; }
+  .legend .swatch { width:18px; height:4px; border-radius:2px; }
+  .legend .dot { width:10px; height:10px; border-radius:50%; border:2px solid white; box-shadow:0 0 0 1px rgba(0,0,0,0.3); }
+  .popup-title { font-weight:600; font-size:13px; margin-bottom:2px; }
+  .popup-meta { color:#555; font-size:12px; }
+  .note { font-size:11px; color:#666; margin-top:6px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Lake Garda — Arco base + gravel rides</h1>
+    <div class="controls">
+      <button class="primary" onclick="fitArco()">Zoom to Arco hotels</button>
+      <button class="primary" onclick="fitAll()">Fit all rides</button>
+    </div>
+  </header>
+  <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const map = L.map('map', { zoomControl: true }).setView([45.89, 10.83], 11);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// Hotel candidates around Arco
+const gardaHotels = [
+  { name: 'Hotel Garden Arco (your pick)', coord: [45.9172, 10.8862], note: 'In Arco, ~5 min walk to old town. Confirm bike storage when booking.' },
+  { name: 'Hotel Everest (Arco)', coord: [45.9160, 10.8920], note: 'Bike-friendly, secure garage, larger rooms.' },
+  { name: 'Vivere Suites & Rooms (Arco)', coord: [45.9181, 10.8856], note: 'Stylish design hotel, old town.' },
+];
+gardaHotels.forEach(h => {
+  L.circleMarker(h.coord, {
+    radius: 8, color: '#fff', weight: 2, fillColor: '#1f6feb', fillOpacity: 1
+  })
+  .bindPopup(`<div class="popup-title">${h.name}</div><div class="popup-meta">${h.note}</div>`)
+  .addTo(map);
+});
+
+// Reference points (towns, lakes)
+const refPoints = [
+  { name: 'Riva del Garda', coord: [45.8854, 10.8410] },
+  { name: 'Lago di Tenno', coord: [45.9140, 10.8222] },
+  { name: 'Lago di Ledro', coord: [45.8742, 10.7569] },
+  { name: 'Limone sul Garda', coord: [45.8095, 10.7853] },
+  { name: 'Pregasina', coord: [45.8504, 10.7906] },
+  { name: 'Tremalzo (approx)', coord: [45.8500, 10.6500] },
+];
+refPoints.forEach(p => {
+  L.circleMarker(p.coord, { radius: 4, color: '#444', weight: 1, fillColor: '#fff', fillOpacity: 1 })
+    .bindTooltip(p.name)
+    .addTo(map);
+});
+
+// Approximate gravel ride lines (not GPX-accurate — for visualisation)
+const ponale = [
+  [45.8854, 10.8410], [45.8743, 10.8273], [45.8584, 10.8120],
+  [45.8504, 10.7906], [45.8742, 10.7569]
+];
+const ponaleLine = L.polyline(ponale, { color: '#16a34a', weight: 4, opacity: 0.85 })
+  .bindPopup('<div class="popup-title">Strada del Ponale + Lago di Ledro</div><div class="popup-meta">~50–70 km, 800–1200 m. Day-1 warm-up.</div>')
+  .addTo(map);
+
+const tennoLoop = [
+  [45.9180, 10.8855], [45.9000, 10.8500], [45.9050, 10.8200],
+  [45.9140, 10.8222], [45.9210, 10.8400], [45.9180, 10.8855]
+];
+const tennoLine = L.polyline(tennoLoop, { color: '#16a34a', weight: 4, opacity: 0.85, dashArray: '6 6' })
+  .bindPopup('<div class="popup-title">Lago di Tenno loop</div><div class="popup-meta">~30 km, 600 m. Recovery day with swim stop.</div>')
+  .addTo(map);
+
+const tremalzo = [
+  [45.8854, 10.8410], [45.8500, 10.7900], [45.8200, 10.7500],
+  [45.8500, 10.6800], [45.8742, 10.7569], [45.8854, 10.8410]
+];
+const tremalzoLine = L.polyline(tremalzo, { color: '#7c3aed', weight: 4, opacity: 0.85 })
+  .bindPopup('<div class="popup-title">Tremalzo / Bocca di Cablone loop</div><div class="popup-meta">~80–95 km, ~2000 m. The marquee Garda gravel ride.</div>')
+  .addTo(map);
+
+const stivo = [
+  [45.9180, 10.8855], [45.9100, 10.9300], [45.8900, 10.9500],
+  [45.8800, 10.9100], [45.9100, 10.8950], [45.9180, 10.8855]
+];
+const stivoLine = L.polyline(stivo, { color: '#7c3aed', weight: 4, opacity: 0.85, dashArray: '6 6' })
+  .bindPopup('<div class="popup-title">Monte Stivo gravel loop</div><div class="popup-meta">~70 km, ~1800 m. Big Garda views.</div>')
+  .addTo(map);
+
+const allRides = L.featureGroup([ponaleLine, tennoLine, tremalzoLine, stivoLine]);
+
+// Legend
+const legend = L.control({ position: 'bottomright' });
+legend.onAdd = function () {
+  const div = L.DomUtil.create('div', 'legend');
+  div.innerHTML = `
+    <h4>Legend</h4>
+    <div class="row"><span class="swatch" style="background:#16a34a"></span> Warm-up / recovery rides</div>
+    <div class="row"><span class="swatch" style="background:#7c3aed"></span> Big gravel days</div>
+    <div class="row"><span class="dot" style="background:#1f6feb"></span> Hotel candidates</div>
+    <div class="note">Lines are approximate — for planning only, not GPX-accurate.</div>
+  `;
+  return div;
+};
+legend.addTo(map);
+
+function fitArco() {
+  map.flyToBounds(L.latLngBounds([[45.910, 10.880],[45.925, 10.895]]), { duration: 1.2 });
+}
+function fitAll() {
+  map.flyToBounds(allRides.getBounds().pad(0.1), { duration: 1.2 });
+}
+fitAll();
+</script>
+</body>
+</html>
