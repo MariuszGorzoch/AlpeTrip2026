@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<title>D6 · 29 lipca — Duży dzień: Monte Stivo / Monte Velo | Alpe Adria 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Pętla gravel z Arco przez Bordala / Malga Stivo. Mieszanka gravelu i asfaltu, duże alpejskie widoki." />
+<link rel="stylesheet" href="../assets/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+<div data-nav></div>
+
+<main class="container">
+  <a href="../plan.html" class="small muted">← Plan dzień po dniu</a>
+  <h1>D6 · 29 lipca — Duży dzień: Monte Stivo / Monte Velo</h1>
+  <div class="flex-row small muted">
+    <span>Środa</span>
+    <span>·</span>
+    <span><span class="badge big">Duży dzień</span></span>
+    <span>·</span>
+    <span>Baza: <strong>Hotel w Arco</strong></span>
+  </div>
+
+  <nav class="day-pills"><a href="d1.html" class="">D1 · 24/07</a><a href="d2.html" class="">D2 · 25/07</a><a href="d3.html" class="">D3 · 26/07</a><a href="d4.html" class="">D4 · 27/07</a><a href="d5.html" class="">D5 · 28/07</a><a href="d6.html" class="active">D6 · 29/07</a><a href="d7.html" class="">D7 · 30/07</a><a href="d8.html" class="">D8 · 31/07</a><a href="d9.html" class="">D9 · 01/08</a><a href="d10.html" class="">D10 · 02/08</a></nav>
+
+  <div class="stat-row">
+    <div class="stat"><div class="label">Dystans</div><div class="value">~70 km</div></div>
+    <div class="stat"><div class="label">Przewyższenie</div><div class="value">+1800 m</div></div>
+    <div class="stat"><div class="label">Czas (szac.)</div><div class="value">6 h</div></div>
+    <div class="stat"><div class="label">Trudność</div><div class="value" style="font-size:1rem">Trudno</div></div>
+  </div>
+
+  <p style="font-size:1.05rem;">Pętla gravel z Arco przez Bordala / Malga Stivo. Mieszanka gravelu i asfaltu, duże alpejskie widoki.</p>
+
+  <h2>Mini-mapa</h2>
+  <div id="mini-d6" class="mini-map"></div>
+
+  <section><h2>Trasa</h2><p><b>Pętla gravel Monte Stivo</b> z Arco przez Bordala / Malga Stivo, ~70 km, ~1800 m. Mieszanka graveli i asfaltu, duże alpejskie widoki na Gardę.</p>
+                <p><b>Alternatywa:</b> Monte Velo / Bocca di Trat — klasyczny gravel Garda, podobny dystans, mniej tłumu.</p></section>
+<section><h2>Praktyka</h2><ul>
+                <li>Wyjedź wcześnie — wspinaczka w cieniu rano jest sporo łatwiejsza niż w słońcu po południu.</li>
+                <li>Zabierz 2 butle wody + jedzenie energetyczne. Schroniska są, ale rozsiane.</li>
+                <li>Schłodzenie po zjeździe: kąpiel w Sarca pod Arco.</li>
+            </ul></section>
+
+  <section><h2>Atrakcje po drodze / w okolicy</h2><div class="attr-grid"><div class="attr-card"><div class="name">★ Monte Stivo</div><div class="dist">baza Arco</div><div>Klasyczny podjazd gravel/asfalt z widokiem na całą Gardę.</div></div><div class="attr-card"><div class="name">★ Stare miasto Arco + zamek</div><div class="dist">baza</div><div>Średniowieczny zamek na skale, klimatyczne uliczki, gelaterie.</div></div></div></section>
+
+  <h2>Pogoda i światło</h2>
+  <div class="weather"><div><div class="label">Max</div><div class="value">32°</div></div><div><div class="label">Min</div><div class="value">19°</div></div><div><div class="label">Wschód</div><div class="value">05:53</div></div><div><div class="label">Zachód</div><div class="value">20:43</div></div></div><div class="callout"><strong>Pogoda:</strong> Garda — możliwe burze popołudniu</div>
+
+  <div class="flex-row" style="justify-content:space-between; margin: 24px 0 0;"><a class="btn secondary" href="d5.html">← D5 · 28/07</a><a class="btn secondary" href="d7.html">D7 · 30/07 →</a></div>
+</main>
+
+<script>
+(function() {
+  const data = {"type": "route", "center": [45.9, 10.93], "zoom": 11, "points": [{"name": "Arco (start)", "coord": [45.9172, 10.8862], "col": "#84cc16"}, {"name": "Bordala", "coord": [45.918, 10.95]}, {"name": "Monte Stivo", "coord": [45.89, 10.962], "col": "#dc2626"}]};
+  const map = L.map('mini-d6', { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: !L.Browser.mobile }).setView(data.center, data.zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18, attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+  const pts = data.points || [];
+  const ll = [];
+  pts.forEach(p => {
+    const col = p.col || '#1f6feb';
+    L.circleMarker(p.coord, { radius: 7, color: '#fff', weight: 2, fillColor: col, fillOpacity: 1 })
+      .bindTooltip(p.name, { permanent: false })
+      .addTo(map);
+    ll.push(p.coord);
+  });
+  if (ll.length > 1) {
+    L.polyline(ll, { color: '#1f6feb', weight: 3, opacity: 0.7, dashArray: '6 6' }).addTo(map);
+    map.fitBounds(L.latLngBounds(ll).pad(0.2));
+  }
+})();
+</script>
+
+<footer class="footer">
+  Wyjazd 24/07 – 02/08 2026 · <a href="../index.html">Strona główna</a> · <a href="../plan.html">Plan</a>
+</footer>
+<script src="../assets/nav.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</body>
+</html>

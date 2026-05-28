@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<title>D3 · 26 lipca — Duży dzień: Pontebba → Venzone (najlepszy odcinek) | Alpe Adria 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Najmalowniczy fragment całej trasy Alpe Adria — galerie, wiadukty, średniowieczne Venzone." />
+<link rel="stylesheet" href="../assets/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+<div data-nav></div>
+
+<main class="container">
+  <a href="../plan.html" class="small muted">← Plan dzień po dniu</a>
+  <h1>D3 · 26 lipca — Duży dzień: Pontebba → Venzone (najlepszy odcinek)</h1>
+  <div class="flex-row small muted">
+    <span>Niedziela</span>
+    <span>·</span>
+    <span><span class="badge big">Duży dzień</span></span>
+    <span>·</span>
+    <span>Baza: <strong>Villa Libuse B&amp;B (Pontebba)</strong></span>
+  </div>
+
+  <nav class="day-pills"><a href="d1.html" class="">D1 · 24/07</a><a href="d2.html" class="">D2 · 25/07</a><a href="d3.html" class="active">D3 · 26/07</a><a href="d4.html" class="">D4 · 27/07</a><a href="d5.html" class="">D5 · 28/07</a><a href="d6.html" class="">D6 · 29/07</a><a href="d7.html" class="">D7 · 30/07</a><a href="d8.html" class="">D8 · 31/07</a><a href="d9.html" class="">D9 · 01/08</a><a href="d10.html" class="">D10 · 02/08</a></nav>
+
+  <div class="stat-row">
+    <div class="stat"><div class="label">Dystans</div><div class="value">~140 km (tam i z pow.)</div></div>
+    <div class="stat"><div class="label">Przewyższenie</div><div class="value">~+700 m (powrót pod górę)</div></div>
+    <div class="stat"><div class="label">Czas (szac.)</div><div class="value">6–7 h</div></div>
+    <div class="stat"><div class="label">Trudność</div><div class="value" style="font-size:1rem">Duży dzień</div></div>
+  </div>
+
+  <p style="font-size:1.05rem;">Najmalowniczy fragment całej trasy Alpe Adria — galerie, wiadukty, średniowieczne Venzone.</p>
+
+  <h2>Mini-mapa</h2>
+  <div id="mini-d3" class="mini-map"></div>
+
+  <section><h2>Trasa</h2><ul>
+                <li><b>Pontebba → Resiutta → Venzone → Gemona</b> i z powrotem. Lub w jedną stronę z transportem samochodem.</li>
+                <li>Stara linia kolejowa Pontebbana wytyczona przez dolinę Fella — galerie, wiadukty, wąwozy rzek.</li>
+                <li>Otwarcie na <b>Venzone</b> — średniowieczne miasto z murami, w całości odbudowane po trzęsieniu 1976.</li>
+                <li>Powszechnie uważany za najbardziej malowniczy fragment całej trasy Salzburg–Grado.</li>
+            </ul></section>
+<section><h2>Warianty</h2><ul>
+                <li><b>Łatwiejszy:</b> Pontebba → Venzone i z powrotem tą samą drogą. Zjazd ~700 m, powrót pod górę.</li>
+                <li><b>Średni:</b> + odbicie do Gemony (jeszcze ~10 km). Powrót pociągiem regionalnym z Carnia/Gemona, jeśli nie masz siły wracać pod górę.</li>
+                <li><b>Big mountain day:</b> zamiast wracać Alpe Adrią, zrób pętlę przez <b>Sella Sant'Agnese</b> lub <b>Sella Carnizza</b> w Val Resia (~+1500–2000 m wspinaczki).</li>
+            </ul></section>
+<section><h2>Nawierzchnia</h2><p>Gładki asfalt, idealny dla opon gravel. Jeśli chcesz prawdziwego graveli, odbij w <b>Val Dogna</b> lub w foothille Julijskie wokół Tarvisio na 1000–1500 m podjazdu.</p></section>
+
+  <section><h2>Atrakcje po drodze / w okolicy</h2><div class="attr-grid"><div class="attr-card"><div class="name">★ Venzone</div><div class="dist">~28 km na pd.</div><div>Średniowieczne miasto-mury, w całości odbudowane po trzęsieniu z 1976.</div></div><div class="attr-card"><div class="name">★ Gemona del Friuli</div><div class="dist">~38 km na pd.</div><div>Większe sąsiedztwo Venzone, katedra z kamienną fasadą św. Krzysztofa.</div></div><div class="attr-card"><div class="name">★ Val Resia</div><div class="dist">~30–40 km na pd.zach.</div><div>Językowo unikalna dolina słowiańska, gravel, dzika natura.</div></div><div class="attr-card"><div class="name">★ Val Dogna (gravel)</div><div class="dist">~25 km</div><div>Dzika dolina pod Jôf di Montasio, niemal zero ruchu.</div></div></div></section>
+
+  <h2>Pogoda i światło</h2>
+  <div class="weather"><div><div class="label">Max</div><div class="value">30°</div></div><div><div class="label">Min</div><div class="value">17°</div></div><div><div class="label">Wschód</div><div class="value">05:49</div></div><div><div class="label">Zachód</div><div class="value">20:37</div></div></div><div class="callout"><strong>Pogoda:</strong> Friuli — nagłe burze popołudniu, jedź duże podjazdy do południa</div>
+
+  <div class="flex-row" style="justify-content:space-between; margin: 24px 0 0;"><a class="btn secondary" href="d2.html">← D2 · 25/07</a><a class="btn secondary" href="d4.html">D4 · 27/07 →</a></div>
+</main>
+
+<script>
+(function() {
+  const data = {"type": "route", "center": [46.42, 13.22], "zoom": 10, "points": [{"name": "Villa Libuse (start)", "coord": [46.50056, 13.30417], "col": "#84cc16"}, {"name": "Resiutta", "coord": [46.39, 13.21]}, {"name": "Venzone", "coord": [46.33031, 13.13825], "col": "#dc2626"}, {"name": "Gemona", "coord": [46.28333, 13.13333]}]};
+  const map = L.map('mini-d3', { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: !L.Browser.mobile }).setView(data.center, data.zoom);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18, attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+  const pts = data.points || [];
+  const ll = [];
+  pts.forEach(p => {
+    const col = p.col || '#1f6feb';
+    L.circleMarker(p.coord, { radius: 7, color: '#fff', weight: 2, fillColor: col, fillOpacity: 1 })
+      .bindTooltip(p.name, { permanent: false })
+      .addTo(map);
+    ll.push(p.coord);
+  });
+  if (ll.length > 1) {
+    L.polyline(ll, { color: '#1f6feb', weight: 3, opacity: 0.7, dashArray: '6 6' }).addTo(map);
+    map.fitBounds(L.latLngBounds(ll).pad(0.2));
+  }
+})();
+</script>
+
+<footer class="footer">
+  Wyjazd 24/07 – 02/08 2026 · <a href="../index.html">Strona główna</a> · <a href="../plan.html">Plan</a>
+</footer>
+<script src="../assets/nav.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</body>
+</html>

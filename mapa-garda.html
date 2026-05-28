@@ -1,44 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
 <meta charset="utf-8" />
-<title>Map 2 — Lake Garda / Arco (second part)</title>
+<title>Mapa Lago di Garda / Arco | Alpe Adria 2026</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
   :root { color-scheme: light; }
   html, body { margin:0; padding:0; height:100%; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#fff; color:#1a1a1a; }
-  #app { display:flex; flex-direction:column; height:100vh; }
-  header { padding:10px 16px; border-bottom:1px solid #e5e5e5; background:#fafafa; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  header h1 { font-size:16px; margin:0; font-weight:600; }
-  header .controls { display:flex; gap:6px; flex-wrap:wrap; }
-  header button { font:inherit; padding:6px 10px; border:1px solid #d0d0d0; background:#fff; border-radius:6px; cursor:pointer; }
-  header button:hover { background:#f0f0f0; }
-  header button.primary { background:#1f6feb; color:white; border-color:#1f6feb; }
-  header button.primary:hover { background:#1858c2; }
-  #map { flex:1; }
-  .legend { background:rgba(255,255,255,0.96); padding:10px 12px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.15); font-size:12px; line-height:1.4; max-width:240px; }
-  .legend h4 { margin:0 0 6px; font-size:13px; }
-  .legend .row { display:flex; align-items:center; gap:6px; margin:3px 0; }
-  .legend .swatch { width:18px; height:4px; border-radius:2px; }
-  .legend .dot { width:10px; height:10px; border-radius:50%; border:2px solid white; box-shadow:0 0 0 1px rgba(0,0,0,0.3); }
+  #map { position:absolute; inset:0; }
+  .back-btn {
+    position:absolute; top:12px; left:12px; z-index:1000;
+    background:rgba(255,255,255,0.95); border:1px solid #ddd;
+    padding:7px 12px; border-radius:8px; font-size:13px; font-weight:500;
+    box-shadow:0 1px 4px rgba(0,0,0,0.15); text-decoration:none; color:#1a1a1a;
+    backdrop-filter:blur(4px);
+  }
+  .back-btn:hover { background:#f0eee5; }
+  .legend { background:rgba(255,255,255,0.96); border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.15); font-size:12px; line-height:1.5; max-width:260px; overflow:hidden; }
+  .legend details summary { padding:8px 12px; cursor:pointer; font-weight:600; font-size:13px; user-select:none; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .legend details summary::-webkit-details-marker { display:none; }
+  .legend details summary::after { content:"▾"; font-size:11px; color:#666; }
+  .legend details[open] summary::after { transform:rotate(180deg); }
+  .legend details summary:hover { background:#f5f5f5; }
+  .legend .legend-body { padding:0 12px 10px; border-top:1px solid #eee; }
+  .legend .row { display:flex; align-items:center; gap:6px; margin:5px 0; }
+  .legend .swatch { width:18px; height:4px; border-radius:2px; display:inline-block; }
+  .legend .dot { width:10px; height:10px; border-radius:50%; border:2px solid white; box-shadow:0 0 0 1px rgba(0,0,0,0.3); display:inline-block; }
+  .note { font-size:11px; color:#666; margin-top:6px; }
   .popup-title { font-weight:600; font-size:13px; margin-bottom:2px; }
   .popup-meta { color:#555; font-size:12px; }
-  .note { font-size:11px; color:#666; margin-top:6px; }
 </style>
 </head>
 <body>
-<div id="app">
-  <header>
-    <h1>Lake Garda — Arco base + gravel rides</h1>
-    <div class="controls">
-      <button class="primary" onclick="fitArco()">Zoom to Arco hotels</button>
-      <button class="primary" onclick="fitAll()">Fit all rides</button>
-    </div>
-  </header>
+  <a class="back-btn" href="mapy.html">← Mapy</a>
   <div id="map"></div>
-</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -119,23 +116,18 @@ const legend = L.control({ position: 'bottomright' });
 legend.onAdd = function () {
   const div = L.DomUtil.create('div', 'legend');
   div.innerHTML = `
-    <h4>Legend</h4>
-    <div class="row"><span class="swatch" style="background:#16a34a"></span> Warm-up / recovery rides</div>
-    <div class="row"><span class="swatch" style="background:#7c3aed"></span> Big gravel days</div>
-    <div class="row"><span class="dot" style="background:#1f6feb"></span> Hotel candidates</div>
-    <div class="note">Lines are approximate — for planning only, not GPX-accurate.</div>
+    <details>
+      <summary>Legenda</summary>
+      <div class="legend-body">
+        <div class="row"><span class="swatch" style="background:#16a34a"></span> Lekkie dni / regeneracja</div>
+        <div class="row"><span class="swatch" style="background:#7c3aed"></span> Duże dni gravel</div>
+        <div class="row"><span class="dot" style="background:#1f6feb"></span> Kandydaci na hotel</div>
+        <div class="note">Linie są przybliżone — tylko do planowania, nie GPX.</div>
+      </div>
+    </details>
   `;
+  L.DomEvent.disableClickPropagation(div);
+  L.DomEvent.disableScrollPropagation(div);
   return div;
 };
-legend.addTo(map);
-
-function fitArco() {
-  map.flyToBounds(L.latLngBounds([[45.910, 10.880],[45.925, 10.895]]), { duration: 1.2 });
-}
-function fitAll() {
-  map.flyToBounds(allRides.getBounds().pad(0.1), { duration: 1.2 });
-}
-fitAll();
-</script>
-</body>
-</html>
+legend.addTo(ma
