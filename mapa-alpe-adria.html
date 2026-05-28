@@ -90,7 +90,16 @@ const hotelIconHtml = `
   <div class="hotel-marker" style="width:140px;height:74px;">
     <div class="thumb-wrap"><img src="${LIBUSE.thumb_url}" alt=""></div>
     <div class="pin-tail" style="top:51px;border-top:8px solid #84cc16;opacity:0.9;"></div>
-    <div class="dot-wrap" style="background:#84cc16;"></div>
+    <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+      width:22px;height:22px;background:#fff;border-radius:50%;
+      border:2px solid #84cc16;box-shadow:0 0 0 1px rgba(0,0,0,.2);
+      display:flex;align-items:center;justify-content:center;pointer-events:auto;">
+      <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9.5L12 3l9 6.5V21H15v-5h-6v5H3V9.5z"
+          fill="#84cc16" stroke="#4d7c0f" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="9" y="13" width="6" height="8" fill="#fff" rx="0.5"/>
+      </svg>
+    </div>
   </div>`;
 const hotelIcon = L.divIcon({
   className: 'hotel-divicon',
