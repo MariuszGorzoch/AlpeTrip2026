@@ -100,6 +100,24 @@ const hotelIcon = L.divIcon({
 const libuseLink = `<a href="${LIBUSE.website}" target="_blank" rel="noopener">${LIBUSE.website.replace(/^https?:\/\//,'').replace(/\/$/,'')}</a>`;
 const libusePopup = `<img class="popup-img" src="${LIBUSE.thumb_url}" alt=""><div class="popup-title">${LIBUSE.name}</div><div class="popup-meta">${LIBUSE.note}<br>${libuseLink}</div>`;
 const libuseMarker = L.marker(LIBUSE.coord, { icon: hotelIcon }).bindPopup(libusePopup).addTo(map);
+// B&B Stari Mlin - Vecchio Mulino (San Giorgio di Resia)
+const STARI_MLIN = {
+  name: 'B&B Stari Mlin – Vecchio Mulino',
+  coord: [46.3734, 13.2874],
+  note: '6 SP42, 33010 San Giorgio di Resia (Val Resia, UD). Stary młyn w dolinie Resia — cicha lokalizacja, ~35 km rowerem od Pontebby.',
+  gmaps: 'https://maps.google.com/?q=B%26B+Stari+Mlin+Vecchio+Mulino,+SP42+6,+33010+San+Giorgio,+Italy',
+  booking: 'https://www.booking.com/hotel/it/b-amp-b-stari-mlin-vecchio-mulino.pl.html'
+};
+const stariMlinMarker = L.circleMarker(STARI_MLIN.coord, {
+  radius: 9, color: '#fff', weight: 2.5, fillColor: '#22c55e', fillOpacity: 1
+}).bindPopup(
+  '<div class="popup-title">' + STARI_MLIN.name + '</div>' +
+  '<div class="popup-meta">' + STARI_MLIN.note + '</div>' +
+  '<div class="popup-links" style="margin-top:6px">' +
+  '<a href="' + STARI_MLIN.gmaps + '" target="_blank" rel="noopener">Google Maps / zdjęcia</a> · ' +
+  '<a href="' + STARI_MLIN.booking + '" target="_blank" rel="noopener">Booking.com</a>' +
+  '</div>'
+).addTo(map);
 
 // Star SVG (yellow)
 const STAR_SVG = `<svg class="star-pin" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
