@@ -130,4 +130,9 @@ legend.onAdd = function () {
   L.DomEvent.disableScrollPropagation(div);
   return div;
 };
-legend.addTo(ma
+legend.addTo(map);
+
+map.fitBounds(allRides.getBounds().pad(0.1));
+</script>
+</body>
+</html>
