@@ -18,27 +18,29 @@
     backdrop-filter:blur(4px);
   }
   .back-btn:hover { background:#f0eee5; }
-  .legend { background:rgba(255,255,255,0.96); border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.15); font-size:12px; line-height:1.5; max-width:260px; overflow:hidden; }
-  .legend details summary { padding:8px 12px; cursor:pointer; font-weight:600; font-size:13px; user-select:none; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .legend details summary::-webkit-details-marker { display:none; }
-  .legend details summary::after { content:"▾"; font-size:11px; color:#666; }
-  .legend details[open] summary::after { transform:rotate(180deg); }
-  .legend details summary:hover { background:#f5f5f5; }
-  .legend .legend-body { padding:0 12px 10px; border-top:1px solid #eee; }
-  .legend .row { display:flex; align-items:center; gap:6px; margin:5px 0; }
-  .legend .swatch { width:18px; height:4px; border-radius:2px; display:inline-block; }
-  .legend .dot { width:10px; height:10px; border-radius:50%; border:2px solid white; box-shadow:0 0 0 1px rgba(0,0,0,0.3); display:inline-block; }
-  .note { font-size:11px; color:#666; margin-top:6px; }
+
+  /* Hotel photo marker */
+  .hotel-marker { position:relative; pointer-events:none; }
+  .hotel-marker .thumb-wrap {
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:80px; height:50px; border-radius:6px; overflow:hidden;
+    border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.35);
+    background:#eee; pointer-events:auto;
+  }
+  .hotel-marker .thumb-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+  .hotel-marker .pin-tail { position:absolute; left:50%; transform:translateX(-50%); width:0; height:0; }
+  .hotel-marker .dot-wrap {
+    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+    width:22px; height:22px; background:#fff; border-radius:50%;
+    border:2px solid #3b82f6; box-shadow:0 0 0 1px rgba(0,0,0,.2);
+    display:flex; align-items:center; justify-content:center; pointer-events:auto;
+  }
+
   .popup-title { font-weight:600; font-size:13px; margin-bottom:2px; }
   .popup-meta { color:#555; font-size:12px; }
   .popup-links { margin-top:6px; font-size:12px; }
   .popup-links a { display:inline-block; margin-right:8px; color:#1f6feb; }
   .popup-img { width:220px; max-width:100%; height:auto; border-radius:6px; margin-bottom:6px; display:block; }
-
-  /* House hotel marker */
-  .hotel-marker { position:relative; pointer-events:none; }
-  .hotel-marker .pin-tail { position:absolute; left:50%; transform:translateX(-50%); width:0; height:0; }
-  .hotel-marker .dot-wrap { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:18px; height:18px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.35); pointer-events:auto; }
 </style>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
 </head>
@@ -48,7 +50,7 @@
 
 <script src="assets/leaflet.js"></script>
 <script>
-const map = L.map('map', { zoomControl: true }).setView([45.89, 10.83], 11);
+const map = L.map('map', { zoomControl: true }).setView([45.9241, 10.8902], 14);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
@@ -65,29 +67,25 @@ const GARDEN = {
 };
 
 const gardenIconHtml = `
-  <div class="hotel-marker" style="width:120px;height:60px;">
-    <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);
-      width:64px;height:42px;background:#eff6ff;border-radius:8px;
-      border:2px solid #3b82f6;box-shadow:0 2px 6px rgba(0,0,0,.3);
-      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px">
-      <svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 9.5L12 3l9 6.5V21H15v-5h-6v5H3V9.5z"
-          fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.2" stroke-linejoin="round"/>
-        <rect x="9" y="13" width="6" height="8" fill="#fff" rx="1"/>
+  <div class="hotel-marker" style="width:140px;height:74px;">
+    <div class="thumb-wrap"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCABJAIUDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDyE2jbiqxTk7QwBTnBHB+hJHNaD6fpMQXzZNTj3dN0AGT3719jP8LPCImj8vwn4f8AJHDhrQbvwPT86sf8Kt8Dnk+E9Fz/ANeif4VvSrKG8U/UznBy2bR8arpGmyTRwxnV2llYJGn2YZdj0A55NNk07SYRmWTVUGcZa3Uf1r7NHwu8EKQR4U0YEHIItVBB/KkPwt8Dnr4T0U/9uif4Vp9aX/PuP3f8Ej2L/mZ8ZjT9H3FDLqu7rgQLnGcevrSrpmkOzIH1YspwVFupIOM8819l/wDCrfA46eE9F/8AARP8KX/hVvgf/oU9F/8AAVP8KPrS/wCfcfu/4I/Yv+Znxxbpp8URMFxqXkjL5NqjD0JOT7UBbCCJnFxqQXhixtI8D3ya+xv+FW+B8Y/4RPRcen2RP8KU/C3wOevhPRT/ANuqf4U3i0/+Xcfuf+YlQt9pnx1iwjbb9o1Ibm4DWkfLHqKTy7BlaDz9RIYElfsaZweh9eea+xv+FXeB85/4RTRs+v2VP8KP+FW+B/8AoU9F/wDAVP8ACl9aX/PuP3f8Efsf7zPiK8tEWQmyWeSED5mlTaQR1GBnpUP2W5AUmA4cgKecEnoK+4v+FW+B+n/CJ6L/AOAif4Uv/CrfA/H/ABSmjcdP9FTj9KwlO7vZI0UbK1z4ca0ukALW7KCQASCASelKLWcNh4XBIyBg84619xf8Kt8D/wDQp6L/AOAqf4Uf8Kt8D5z/AMIpo2f+vVP8Knm8h2Ph54UjcRyCZZASGUryPTrVua2twbWTTmvpQEVpi8IGyTPzBcE5AGME19q/8Ks8Df8AQpaL/wCAif4Uf8Kt8D4x/wAInouP+vRP8KkZ8V3MFtbsUV70JuJUyQhcjjmivtQ/CzwMevhPRf8AwET/AAooA6miiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKADNGa4aL/VJ/uj+VPoA7bNGa4migDts0ZriaKAO2zRmuJooA7bNGa4migDts0ZriaKAO2zRmuJooA7bNGa4migDts0VxBooA//Z" alt="Hotel Garden Arco"></div>
+    <div class="pin-tail" style="top:51px;border-top:8px solid #3b82f6;opacity:0.9;"></div>
+    <div class="dot-wrap">
+      <svg viewBox="0 0 24 24" width="13" height="13" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9.5L12 3l9 6.5V21H15v-5h-6v5H3V9.5z" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
+        <rect x="9" y="13" width="6" height="8" fill="#fff" rx="0.5"/>
       </svg>
-      <span style="font-size:9px;font-weight:700;color:#1d4ed8;line-height:1">noclegi</span>
     </div>
-    <div class="pin-tail" style="top:43px;border-top:8px solid #3b82f6;opacity:0.9;"></div>
-    <div class="dot-wrap" style="background:#3b82f6;"></div>
   </div>`;
 
 const gardenIcon = L.divIcon({
   className: 'hotel-divicon',
   html: gardenIconHtml,
-  iconSize: [120, 60], iconAnchor: [60, 58], popupAnchor: [0, -56]
+  iconSize: [140, 74], iconAnchor: [70, 72], popupAnchor: [0, -70]
 });
 
 const gardenPopup =
+  '<img class="popup-img" src="data:image/jpeg;base64,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ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooyPWjI9RQAUUZHqKMj1FABRRkeooyPUUAFFGR6ijI9RQAUUZHqKMj1FABRRkeooyPUUAFFGR6ijI9RQAUUZHqKMj1FABRRkeooyPUUAFFGR6ijI9RQAUUZHqKMj1FABRRkeooyPUUAFFGR6ijI9RQAUUZHqKMj1FABRRkeooyPUUAFFGR6ijI9RQAUUZHqKMj1FAHiOn+IdZewtmbVtQZjEpJNw5JOB71Y/t/V/8AoK3/AP4EP/jRRQAf2/q//QVv/wDwIf8Axo/t/V/+grf/APgQ/wDjRRQAf2/q/wD0Fb//AMCH/wAaP7f1f/oK3/8A4EP/AI0UUAH9v6v/ANBW/wD/AAIf/Gj+39X/AOgrf/8AgQ/+NFFAB/b+r/8AQVv/APwIf/Gj+39X/wCgrf8A/gQ/+NFFAB/b+r/9BW//APAh/wDGj+39X/6Ct/8A+BD/AONFFAB/b+r/APQVv/8AwIf/ABo/t/V/+grf/wDgQ/8AjRRQAf2/q/8A0Fb/AP8AAh/8aP7f1f8A6Ct//wCBD/40UUAH9v6v/wBBW/8A/Ah/8aP7f1f/AKCt/wD+BD/40UUAH9v6v/0Fb/8A8CH/AMaP7f1f/oK3/wD4EP8A40UUAH9v6v8A9BW//wDAh/8AGj+39X/6Ct//AOBD/wCNFFAB/b+r/wDQVv8A/wACH/xo/t/V/wDoK3//AIEP/jRRQAf2/q//AEFb/wD8CH/xo/t/V/8AoK3/AP4EP/jRRQAf2/q//QVv/wDwIf8Axo/t/V/+grf/APgQ/wDjRRQAf2/q/wD0Fb//AMCH/wAaP7f1f/oK3/8A4EP/AI0UUAH9v6v/ANBW/wD/AAIf/Gj+39X/AOgrf/8AgQ/+NFFAB/b+r/8AQVv/APwIf/Gon8QawGP/ABNr/wD8CH/xoooA/9k=" alt="Hotel Garden Arco">' +
   '<div class="popup-title">' + GARDEN.name + '</div>' +
   '<div class="popup-meta">' + GARDEN.note + '</div>' +
   '<div class="popup-links">' +
@@ -96,34 +94,6 @@ const gardenPopup =
   '</div>';
 
 L.marker(GARDEN.coord, { icon: gardenIcon }).bindPopup(gardenPopup).addTo(map);
-
-// Reference points (towns, lakes)
-const refPoints = [
-  { name: 'Riva del Garda', coord: [45.8854, 10.8410] },
-  { name: 'Lago di Tenno', coord: [45.9140, 10.8222] },
-  { name: 'Lago di Ledro', coord: [45.8742, 10.7569] },
-  { name: 'Limone sul Garda', coord: [45.8095, 10.7853] },
-  { name: 'Pregasina', coord: [45.8504, 10.7906] },
-  { name: 'Tremalzo (approx)', coord: [45.8500, 10.6500] },
-];
-refPoints.forEach(p => {
-  L.circleMarker(p.coord, { radius: 4, color: '#444', weight: 1, fillColor: '#fff', fillOpacity: 1 })
-    .bindTooltip(p.name)
-    .addTo(map);
-});
-
-// Approximate gravel ride lines (not GPX-accurate — for visualisation)
-const ponale = [
-  [45.8854, 10.8410], [45.8743, 10.8273], [45.8584, 10.8120],
-  [45.8504, 10.7906], [45.8742, 10.7569]
-];
-const ponaleLine = L.polyline(ponale, { color: '#16a34a', weight: 4, opacity: 0.85 })
-  .bindPopup('<div class="popup-title">Strada del Ponale + Lago di Ledro</div><div class="popup-meta">~50–70 km, 800–1200 m. Day-1 warm-up.</div>')
-  .addTo(map);
-
-const tennoLoop = [
-  [45.9180, 10.8855], [45.9000, 10.8500], [45.9050, 10.8200],
-  [45.9140, 10.8222], [45.9210, 10.8400], [45.9180, 10.8855]
-];
-const tennoLine = L.polyline(tennoLoop, { color: '#16a34a', weight: 4, opacity: 0.85, dashArray: '6 6' })
-  .bindPopup('
+</script>
+</body>
+</html>
