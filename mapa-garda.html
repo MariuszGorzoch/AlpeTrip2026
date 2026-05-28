@@ -31,6 +31,14 @@
   .note { font-size:11px; color:#666; margin-top:6px; }
   .popup-title { font-weight:600; font-size:13px; margin-bottom:2px; }
   .popup-meta { color:#555; font-size:12px; }
+  .popup-links { margin-top:6px; font-size:12px; }
+  .popup-links a { display:inline-block; margin-right:8px; color:#1f6feb; }
+  .popup-img { width:220px; max-width:100%; height:auto; border-radius:6px; margin-bottom:6px; display:block; }
+
+  /* House hotel marker */
+  .hotel-marker { position:relative; pointer-events:none; }
+  .hotel-marker .pin-tail { position:absolute; left:50%; transform:translateX(-50%); width:0; height:0; }
+  .hotel-marker .dot-wrap { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:18px; height:18px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.35); pointer-events:auto; }
 </style>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
 </head>
@@ -47,19 +55,47 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Hotel candidates around Arco
-const gardaHotels = [
-  { name: 'Hotel Garden Arco (your pick)', coord: [45.9172, 10.8862], note: 'In Arco, ~5 min walk to old town. Confirm bike storage when booking.' },
-  { name: 'Hotel Everest (Arco)', coord: [45.9160, 10.8920], note: 'Bike-friendly, secure garage, larger rooms.' },
-  { name: 'Vivere Suites & Rooms (Arco)', coord: [45.9181, 10.8856], note: 'Stylish design hotel, old town.' },
-];
-gardaHotels.forEach(h => {
-  L.circleMarker(h.coord, {
-    radius: 8, color: '#fff', weight: 2, fillColor: '#1f6feb', fillOpacity: 1
-  })
-  .bindPopup(`<div class="popup-title">${h.name}</div><div class="popup-meta">${h.note}</div>`)
-  .addTo(map);
+// Hotel Garden Arco — noclegi
+const GARDEN = {
+  name: 'Hotel Garden Arco',
+  coord: [45.9241, 10.8902],
+  note: 'Via Paolina Caproni Maini 40, 38062 Arco (TN). Baza wypadowa na wszystkie pętle gravel.',
+  gmaps: 'https://maps.google.com/?q=Hotel+Garden+Arco,+Via+Paolina+Caproni+Maini+40,+38062+Arco',
+  booking: 'https://www.booking.com/hotel/it/garden-arco.pl.html'
+};
+
+const gardenIconHtml = `
+  <div class="hotel-marker" style="width:120px;height:60px;">
+    <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);
+      width:64px;height:42px;background:#eff6ff;border-radius:8px;
+      border:2px solid #3b82f6;box-shadow:0 2px 6px rgba(0,0,0,.3);
+      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px">
+      <svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9.5L12 3l9 6.5V21H15v-5h-6v5H3V9.5z"
+          fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.2" stroke-linejoin="round"/>
+        <rect x="9" y="13" width="6" height="8" fill="#fff" rx="1"/>
+      </svg>
+      <span style="font-size:9px;font-weight:700;color:#1d4ed8;line-height:1">noclegi</span>
+    </div>
+    <div class="pin-tail" style="top:43px;border-top:8px solid #3b82f6;opacity:0.9;"></div>
+    <div class="dot-wrap" style="background:#3b82f6;"></div>
+  </div>`;
+
+const gardenIcon = L.divIcon({
+  className: 'hotel-divicon',
+  html: gardenIconHtml,
+  iconSize: [120, 60], iconAnchor: [60, 58], popupAnchor: [0, -56]
 });
+
+const gardenPopup =
+  '<div class="popup-title">' + GARDEN.name + '</div>' +
+  '<div class="popup-meta">' + GARDEN.note + '</div>' +
+  '<div class="popup-links">' +
+  '<a href="' + GARDEN.gmaps + '" target="_blank" rel="noopener">Google Maps</a> · ' +
+  '<a href="' + GARDEN.booking + '" target="_blank" rel="noopener">Booking.com</a>' +
+  '</div>';
+
+L.marker(GARDEN.coord, { icon: gardenIcon }).bindPopup(gardenPopup).addTo(map);
 
 // Reference points (towns, lakes)
 const refPoints = [
@@ -90,49 +126,4 @@ const tennoLoop = [
   [45.9140, 10.8222], [45.9210, 10.8400], [45.9180, 10.8855]
 ];
 const tennoLine = L.polyline(tennoLoop, { color: '#16a34a', weight: 4, opacity: 0.85, dashArray: '6 6' })
-  .bindPopup('<div class="popup-title">Lago di Tenno loop</div><div class="popup-meta">~30 km, 600 m. Recovery day with swim stop.</div>')
-  .addTo(map);
-
-const tremalzo = [
-  [45.8854, 10.8410], [45.8500, 10.7900], [45.8200, 10.7500],
-  [45.8500, 10.6800], [45.8742, 10.7569], [45.8854, 10.8410]
-];
-const tremalzoLine = L.polyline(tremalzo, { color: '#7c3aed', weight: 4, opacity: 0.85 })
-  .bindPopup('<div class="popup-title">Tremalzo / Bocca di Cablone loop</div><div class="popup-meta">~80–95 km, ~2000 m. The marquee Garda gravel ride.</div>')
-  .addTo(map);
-
-const stivo = [
-  [45.9180, 10.8855], [45.9100, 10.9300], [45.8900, 10.9500],
-  [45.8800, 10.9100], [45.9100, 10.8950], [45.9180, 10.8855]
-];
-const stivoLine = L.polyline(stivo, { color: '#7c3aed', weight: 4, opacity: 0.85, dashArray: '6 6' })
-  .bindPopup('<div class="popup-title">Monte Stivo gravel loop</div><div class="popup-meta">~70 km, ~1800 m. Big Garda views.</div>')
-  .addTo(map);
-
-const allRides = L.featureGroup([ponaleLine, tennoLine, tremalzoLine, stivoLine]);
-
-// Legend
-const legend = L.control({ position: 'bottomright' });
-legend.onAdd = function () {
-  const div = L.DomUtil.create('div', 'legend');
-  div.innerHTML = `
-    <details>
-      <summary>Legenda</summary>
-      <div class="legend-body">
-        <div class="row"><span class="swatch" style="background:#16a34a"></span> Lekkie dni / regeneracja</div>
-        <div class="row"><span class="swatch" style="background:#7c3aed"></span> Duże dni gravel</div>
-        <div class="row"><span class="dot" style="background:#1f6feb"></span> Kandydaci na hotel</div>
-        <div class="note">Linie są przybliżone — tylko do planowania, nie GPX.</div>
-      </div>
-    </details>
-  `;
-  L.DomEvent.disableClickPropagation(div);
-  L.DomEvent.disableScrollPropagation(div);
-  return div;
-};
-legend.addTo(map);
-
-map.fitBounds(allRides.getBounds().pad(0.1));
-</script>
-</body>
-</html>
+  .bindPopup('
