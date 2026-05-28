@@ -159,4 +159,13 @@ legend.onAdd = function () {
 };
 legend.addTo(map);
 
-const placesGroup = L.featureGroup(placeMarker
+const placesGroup = L.featureGroup(placeMarkers);
+
+function fitHighlight() { map.flyToBounds(highlightGroup.getBounds().pad(0.1), { duration: 1.2 }); }
+function fitFull()      { map.flyToBounds(fullGroup.getBounds().pad(0.05), { duration: 1.4 }); }
+function fitHotel()     { map.flyTo(LIBUSE.coord, 13, { duration: 1.2 }); }
+function fitPlaces()    { map.flyToBounds(placesGroup.getBounds().pad(0.15), { duration: 1.4 }); }
+fitPlaces();
+</script>
+</body>
+</html>
