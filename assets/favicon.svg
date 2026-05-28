@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- tło -->
+  <rect width="32" height="32" rx="7" fill="#1f6feb"/>
+  <!-- góry -->
+  <polygon points="4,26 12,12 17,20 21,15 28,26" fill="#84cc16" opacity="0.9"/>
+  <!-- śnieg na szczycie -->
+  <polygon points="21,15 24,20 18,20" fill="white" opacity="0.85"/>
+  <!-- gwiazdka -->
+  <text x="22" y="12" font-size="9" fill="#f5b301" font-family="sans-serif" text-anchor="middle">★</text>
+</svg>
