@@ -159,6 +159,55 @@ PLACES.forEach(pl => {
   placeMarkers.push(m);
 });
 
+// ── Distance arrows from hotels to Alpe Adria route ──────────────────────────
+function bearing(a, b) {
+  const toR = x => x * Math.PI / 180;
+  const y = Math.sin(toR(b[1]-a[1])) * Math.cos(toR(b[0]));
+  const x = Math.cos(toR(a[0])) * Math.sin(toR(b[0]))
+          - Math.sin(toR(a[0])) * Math.cos(toR(b[0])) * Math.cos(toR(b[1]-a[1]));
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+function addDistanceArrow(map, from, to, label, color) {
+  color = color || '#16a34a';
+  // Dashed line
+  L.polyline([from, to], {
+    color, weight: 2.5, dashArray: '7 5', opacity: 0.9, interactive: false
+  }).addTo(map);
+
+  // Arrowhead at route end — rotated CSS triangle
+  const deg = bearing(from, to);
+  const arrowHtml =
+    `<div style="width:0;height:0;
+      border-left:6px solid transparent;
+      border-right:6px solid transparent;
+      border-bottom:13px solid ${color};
+      transform:rotate(${deg}deg);
+      transform-origin:50% 85%;
+      opacity:0.9"></div>`;
+  L.marker(to, {
+    icon: L.divIcon({ className:'', html: arrowHtml, iconSize:[12,13], iconAnchor:[6,11] }),
+    interactive: false
+  }).addTo(map);
+
+  // Distance badge at midpoint
+  const mid = [(from[0]+to[0])/2, (from[1]+to[1])/2];
+  const badgeHtml =
+    `<div style="background:#fff;border:1.5px solid ${color};border-radius:10px;
+      padding:2px 8px;font-size:11px;font-weight:700;color:${color};
+      white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.2)">${label}</div>`;
+  L.marker(mid, {
+    icon: L.divIcon({ className:'', html: badgeHtml, iconSize:[70,20], iconAnchor:[35,10] }),
+    interactive: false
+  }).addTo(map);
+}
+
+// Villa Libuse → trasa (0.3 km drogą)
+addDistanceArrow(map, [46.4798, 13.2965], [46.481121, 13.298385], '0.3 km', '#16a34a');
+
+// B&B Stari Mlin → trasa (11 km drogą przez dolinę Resia)
+addDistanceArrow(map, [46.3734, 13.2874], [46.395661, 13.276426], '11 km', '#f97316');
+
 // Legend
 const legend = L.control({ position: 'bottomright' });
 legend.onAdd = function () {
