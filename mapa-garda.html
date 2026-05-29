@@ -31,7 +31,8 @@
   /* Route label badge */
   .route-label { background:rgba(255,255,255,.95); border-radius:8px; padding:4px 9px;
     font-size:11px; font-weight:600; color:#1a1a1a; box-shadow:0 1px 4px rgba(0,0,0,.22);
-    white-space:nowrap; line-height:1.4; pointer-events:auto; cursor:pointer; }
+    white-space:nowrap; line-height:1.4; pointer-events:auto; cursor:pointer;
+    transform: translate(-50%, -50%); display:inline-block; }
   .route-label .rl-name { font-size:12px; font-weight:700; }
   .route-label .rl-stats { color:#555; font-size:10.5px; margin-top:1px; }
 
@@ -114,8 +115,10 @@ ROUTES.forEach(r => {
     '<div class="popup-meta">' + r.desc + '</div>';
   line.bindPopup(popupHtml);
 
-  // Route label at ~30% along the route
-  const idx = Math.floor(r.coords.length * 0.28);
+  // Per-route label positions — spread so they don't overlap each other
+  const LABEL_PCT = {ponale: 0.22, tremalzo: 0.46, tenno: 0.52, stivo: 0.38};
+  const pct = LABEL_PCT[r.id] || 0.30;
+  const idx = Math.floor(r.coords.length * pct);
   const labelCoord = r.coords[idx];
   const labelHtml =
     '<div class="route-label" style="border-left:4px solid ' + r.color + '">' +
@@ -123,7 +126,7 @@ ROUTES.forEach(r => {
       '<div class="rl-stats">' + r.dist_km + ' km &middot; &uarr;' + r.elev_up + 'm &middot; ' + r.difficulty + '</div>' +
     '</div>';
   L.marker(labelCoord, {
-    icon: L.divIcon({ className: '', html: labelHtml, iconAnchor: [0, 10] })
+    icon: L.divIcon({ className: '', html: labelHtml, iconAnchor: [0, 0] })
   }).bindPopup(popupHtml).addTo(map);
 });
 
@@ -181,12 +184,4 @@ legend.onAdd = function() {
     '<div class="row"><span class="dot" style="background:#0ea5e9"></span> 🌊 Riva del Garda (~6km)</div>' +
     '<div class="row"><span class="dot" style="background:#7c3aed"></span> 🛴 Strada del Ponale (~9km)</div>' +
     '<div class="row"><span class="dot" style="background:#059669"></span> 💧 Lago di Tenno (~10km)</div>' +
-    '<div class="row"><span class="dot" style="background:#0891b2"></span> ⛰ Lago di Ledro (~20km)</div>' +
-    '</div></details>';
-  L.DomEvent.disableClickPropagation(div);
-  L.DomEvent.disableScrollPropagation(div);
-  return div;
-};
-legend.addTo(map);
-</script></body></html>
-                
+    '<div class="row"><span class="dot" style="background:#0891b2"></span> ⛰ Lago di L
