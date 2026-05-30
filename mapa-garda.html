@@ -116,7 +116,7 @@ ROUTES.forEach(r => {
     '<div class="popup-links"><a href="' + r.source_url + '" target="_blank">📍 Źródło trasy</a></div>';
   line.bindPopup(popupHtml);
 
-  // Per-route label positions — spread so they don't overlap each other
+  // Per-route label positions — spread so they don't overlap
   const LABEL_PCT = {ponale: 0.22, tremalzo: 0.46, tenno: 0.52, stivo: 0.38, giro_lago: 0.25};
   const pct = LABEL_PCT[r.id] || 0.30;
   const idx = Math.floor(r.coords.length * pct);
@@ -186,4 +186,11 @@ legend.onAdd = function() {
     '<div class="row"><span class="dot" style="background:#0ea5e9"></span> 🌊 Riva del Garda (~6km)</div>' +
     '<div class="row"><span class="dot" style="background:#7c3aed"></span> 🛴 Strada del Ponale (~9km)</div>' +
     '<div class="row"><span class="dot" style="background:#059669"></span> 💧 Lago di Tenno (~10km)</div>' +
-    '<div class="row"><span class="dot" style="background:#0891b2"></span> ⛰ Lago di L
+    '<div class="row"><span class="dot" style="background:#0891b2"></span> ⛰ Lago di Ledro (~20km)</div>' +
+    '</div></details>';
+  L.DomEvent.disableClickPropagation(div);
+  L.DomEvent.disableScrollPropagation(div);
+  return div;
+};
+legend.addTo(map);
+</script></body></html>
